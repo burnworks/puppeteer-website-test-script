@@ -9,10 +9,11 @@ const program = require('commander');
   program
     .version('0.1.0')
     .option('-u, --url <url>', 'Input URL')
-    .option('-p, --pcwidth [size]', 'Set viewport width for PC (default: 1280)')
-    .option('-P, --pcheight [size]', 'Set viewport height for PC (default: 1024)')
-    .option('-s, --spwidth [size]', 'Set viewport width for smartphone (default: 375)')
-    .option('-S, --spheight [size]', 'Set viewport height for smartphone (default: 667)')
+    .option('-p, --pcwidth [size]', 'Set viewport width for PC. (Defaults : 1280)')
+    .option('-P, --pcheight [size]', 'Set viewport height for PC. (Defaults : 1024)')
+    .option('-s, --spwidth [size]', 'Set viewport width for smartphone. (Defaults : 375)')
+    .option('-S, --spheight [size]', 'Set viewport height for smartphone. (Defaults : 667)')
+    .option('-f, --nofullpage', 'Disable screenshot of the full scrollable page.')
     .parse(process.argv);
 
   if(program.pcwidth)
@@ -35,6 +36,11 @@ const program = require('commander');
   else
     var spHeight = 667;
 
+  if(program.nofullpage)
+    var fullPageOption = false;
+  else
+    var fullPageOption = true;
+
   //puppeteer
   const browser = await puppeteer.launch({
                     args :[
@@ -55,7 +61,7 @@ const program = require('commander');
   });
   await page.screenshot({
     path: `screenshot/${basename}.png`,
-    fullPage: true
+    fullPage: fullPageOption
   });
 
   await page.setViewport({
@@ -64,7 +70,7 @@ const program = require('commander');
   });
   await page.screenshot({
     path: `screenshot/${basename}-sp.png`,
-    fullPage: true
+    fullPage: fullPageOption
   });
 
   await browser.close();
